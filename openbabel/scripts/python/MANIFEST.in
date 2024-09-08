@@ -1,5 +1,0 @@
-include README.rst
-exclude openbabel/openbabel.py
-exclude openbabel/openbabel-python.cpp
-include *.html
-recursive-include examples *
