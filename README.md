@@ -32,34 +32,86 @@ A streamlined version of MOFid for easy compilation and use on Windows through C
    cd mofid-cygwin
    ```
 
-3. Remove existing build folders (if present):
+3. Clone the OpenBabel repository inside the parent directory and remove its .git folder:
+   ```
+   git clone https://github.com/openbabel/openbabel.git
+   cd openbabel
+   rm -rf .git
+   cd ..
+   ```
+
+4. Remove existing build folders (if present):
    ```
    rm -rf openbabel/build openbabel/installed ./bin
    ```
 
-4. Initialize the build:
+5. Initialize the build:
    ```
    make init
    ```
 
-5. Verify the installation:
+6. Verify the installation:
    ```
    bin/sbu irmof_test.cif
    ```
-   You should see output similar to the example in the original README.
+   You should see output showing the SMILES of the nodes and linkers.
 
-6. Set up the Python environment:
+7. Set up the Python environment:
    ```
-   which python
+   which python  # Ensure you are in the correct environment
    python set_paths.py
    pip install .
    ```
 
-7. Verify the Python package installation:
+8. Verify the Python package installation:
    ```
    conda list mofid
    ```
 
 ## 🧪 Testing
 
-Open iPython and run:
+Open iPython and run the following code:
+
+```
+from mofid.run_mofid import cif2mofid
+result = cif2mofid('irmof_test.cif')
+print(result)
+```
+You should see something like this:
+
+```
+{'mofid': '[O-]C(=O)c1ccc(cc1)C(=O)[O-].[Zn]O([Zn])[Zn] MOFid-v1.pcu.cat0.NO_REF;P1-IRMOF-1',
+'mofkey': 'Zn.KKEYFWRCBNTPAC.MOFkey-v1.pcu.NO_REF',
+'smiles_nodes': ['[Zn]O([Zn])[Zn]'],
+'smiles_linkers': ['[O-]C(=O)c1ccc(cc1)C(=O)[O-]'],
+'smiles': '[O-]C(=O)c1ccc(cc1)C(=O)[O-].[Zn]O([Zn])[Zn]',
+'topology': 'pcu',
+'cat': '0',
+'cifname': 'P1-IRMOF-1'}
+```
+This confirms that the MOFid package is correctly installed and working..
+
+
+## Original README
+
+For reference, here's a summary of the original MOFid README:
+
+> **MOFid**
+>
+> A system for rapid identification and analysis of metal-organic frameworks.
+>
+> Please cite [DOI: 10.1021/acs.cgd.9b01050](https://pubs.acs.org/doi/abs/10.1021/acs.cgd.9b01050) if you use MOFid in your work.
+>
+> **2024 update**
+>
+> This is the main repository for MOFid code, with some notable updates in 2024:
+> - Updated dependencies
+> - Support of gcc 11.x
+> - Continuous integration
+>
+> The original MOFid code released in 2019 is available in the [mofid1.0_archive](https://github.com/snurr-group/mofid/tree/mofid1.0_archive) branch.
+>
+> **Usage**
+>
+> [View the documentation](https://snurr-group.github.io/mofid/) for usage information.
+
