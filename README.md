@@ -76,11 +76,14 @@ Thank you for your understanding and potential contributions to improving this p
 7. Set up the Python environment:
    ```
    which python
-```
+   ```
+
 Ensure you are in the correct environment then run (make a new virtual environment if you prefer):
+
    ```
    python set_paths.py
    pip install .
+
    ```
 
 8. Verify the Python package installation:
