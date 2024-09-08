@@ -13,7 +13,7 @@ A streamlined version of MOFid for easy compilation and use on Windows through C
 
 ## 🚀 Getting Started
 
-### Prerequisites
+### 📋 Prerequisites
 
 - [Cygwin](https://www.cygwin.com/) installed with the following packages:
   - gcc-core
@@ -22,7 +22,7 @@ A streamlined version of MOFid for easy compilation and use on Windows through C
   - boost-build
   - cmake
 
-### Installation
+### 🛠️ Installation
 
 1. Open a new Cygwin terminal as administrator.
 
@@ -92,17 +92,17 @@ You should see something like this:
 This confirms that the MOFid package is correctly installed and working..
 
 
-## Original README
+## 📚 Original README
 
 For reference, here's a summary of the original MOFid README:
 
-> **MOFid**
+> **MOFid** 🔬
 >
 > A system for rapid identification and analysis of metal-organic frameworks.
 >
 > Please cite [DOI: 10.1021/acs.cgd.9b01050](https://pubs.acs.org/doi/abs/10.1021/acs.cgd.9b01050) if you use MOFid in your work.
 >
-> **2024 update**
+> **2024 update** 🆕
 >
 > This is the main repository for MOFid code, with some notable updates in 2024:
 > - Updated dependencies
@@ -111,7 +111,7 @@ For reference, here's a summary of the original MOFid README:
 >
 > The original MOFid code released in 2019 is available in the [mofid1.0_archive](https://github.com/snurr-group/mofid/tree/mofid1.0_archive) branch.
 >
-> **Usage**
+> **Usage** 📖
 >
 > [View the documentation](https://snurr-group.github.io/mofid/) for usage information.
 
