@@ -53,29 +53,31 @@ set(mofid_includes
 
 ################################################################################
 
-set(LOCAL_OB_DATADIR "${CMAKE_SOURCE_DIR}/../openbabel/data"
+# Update these paths to use the correct OpenBabel directory
+set(OPENBABEL_DIR "${CMAKE_SOURCE_DIR}/../openbabel")
+set(LOCAL_OB_DATADIR "${OPENBABEL_DIR}/data"
     CACHE PATH "Install dir for OB data, no customization needed for MOFs")
-set(LOCAL_OB_LIBDIR "${CMAKE_SOURCE_DIR}/../openbabel/build/lib"
+set(LOCAL_OB_LIBDIR "${OPENBABEL_DIR}/build/lib"
     CACHE PATH "Install dir for OB shared libraries")
+
 # Set up include file for the data directory
 configure_file(${CMAKE_SOURCE_DIR}/config_sbu.h.cmake
   ${CMAKE_BINARY_DIR}/includes/config_sbu.h)
 include_directories(${CMAKE_BINARY_DIR}/includes/)
 
-
-# Set the path containing OpenBabel3Config.cmake, needed for find_package below.
-find_path(OpenBabel3_DIR OpenBabel3Config.cmake PATHS
-          ${OpenBabel3_DIR}
-          "${CMAKE_SOURCE_DIR}/../openbabel/build"
-          "/usr/lib/openbabel"
-         "/usr/local/lib/openbabel")
+# Update the OpenBabel3_DIR path
+set(OpenBabel3_DIR "${OPENBABEL_DIR}/build")
 
 #
 # Find and setup OpenBabel3.
 #
 find_package(Threads REQUIRED)
 find_package(OpenBabel3 REQUIRED)
-include_directories(${OpenBabel3_INCLUDE_DIRS})
+include_directories(
+    ${OpenBabel3_INCLUDE_DIRS}
+    ${OPENBABEL_DIR}/include
+    ${OPENBABEL_DIR}/installed/include/openbabel3
+)
 
 # Dependencies
 #find_package(LibXml2)
@@ -108,12 +110,13 @@ endforeach(linked_tool)
 # the DLL files are in the same directory as the exe.
 # This section will fix DLL issues on Cygwin but not Windows in general.
 IF (CYGWIN)
-  set (ob_dlls cyginchi-0.dll cygopenbabel-5.dll)
+  set (ob_dlls cyginchi-0.dll cygopenbabel-7.dll)
   FOREACH(ob_dll ${ob_dlls})
     add_custom_command(
       TARGET sbu POST_BUILD COMMAND
       ${CMAKE_COMMAND} -E copy_if_different
       "${OpenBabel3_DIR}/bin/${ob_dll}" ${CMAKE_BINARY_DIR}
+      # "/usr/local/bin/${ob_dll}" ${CMAKE_BINARY_DIR}
     )
   ENDFOREACH()
 ENDIF (CYGWIN)
