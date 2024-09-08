@@ -62,13 +62,26 @@ Thank you for your understanding and potential contributions to improving this p
    ```
    bin/sbu irmof_test.cif
    ```
-   You should see output showing the SMILES of the nodes and linkers.
+   You should see output showing the SMILES of the nodes and linkers, somethign like this
+   ```
+   Created a new output directory: Output/
+Created a new output directory: Output//MetalOxo
+Created a new output directory: Output//SingleNode
+Created a new output directory: Output//AllNode
+Created a new output directory: Output//StandardIsolated
+# Nodes:
+[Zn][O]([Zn])([Zn])[Zn]
+# Linkers:
+[O-]C(=O)c1ccc(cc1)C(=O)[O-]
+# Found 1 simplified net(s)
+```
 
 7. Set up the Python environment:
    ```
    which python
 ```
 Ensure you are in the correct environment then run (make a new virtual environment if you prefer):
+   ```
    python set_paths.py
    pip install .
    ```
