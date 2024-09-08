@@ -6,6 +6,14 @@
 
 A streamlined version of MOFid for easy compilation and use on Windows through Cygwin, featuring the latest OpenBabel version.
 
+## ⚠️ Disclaimer
+
+This project is intended specifically for use with Cygwin and has been tested only on the developer's personal laptop. While efforts have been made to ensure its functionality, please note that it may not work out of the box on all systems. Use at your own discretion.
+
+We encourage users who encounter issues or discover solutions to post them in the Issues tab of this repository. Your contributions may prove invaluable to other users facing similar challenges.
+
+Thank you for your understanding and potential contributions to improving this project!
+
 ## 🎯 Purpose
 
 1. Provide a user-friendly version of the original MOFid repository that's easy to compile and use on Windows through Cygwin.
