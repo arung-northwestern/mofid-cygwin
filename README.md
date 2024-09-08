@@ -1,7 +1,7 @@
 # MOFid-Cygwin 🏗️🖥️
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Windows](https://svgshare.com/i/ZhY.svg)](https://svgshare.com/i/ZhY.svg)
+[![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://www.microsoft.com/windows)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 
 A streamlined version of MOFid for easy compilation and use on Windows through Cygwin, featuring the latest OpenBabel version.
@@ -63,25 +63,3 @@ A streamlined version of MOFid for easy compilation and use on Windows through C
 ## 🧪 Testing
 
 Open iPython and run:
-
-```
-from mofid.run_mofid import cif2mofid
-cif2mofid('irmof_test.cif')
-```
-
-You should see output similar to:
-
-```
-{'mofid': '[O-]C(=O)c1ccc(cc1)C(=O)[O-].[Zn][O]([Zn])([Zn])[Zn] MOFid-v1.pcu.cat0.NO_REF;P1-IRMOF-1',
- 'mofkey': 'Zn.KKEYFWRCBNTPAC.MOFkey-v1.pcu.NO_REF',
- 'smiles_nodes': ['[Zn][O]([Zn])([Zn])[Zn]'],
- 'smiles_linkers': ['[O-]C(=O)c1ccc(cc1)C(=O)[O-]'],
- 'smiles': '[O-]C(=O)c1ccc(cc1)C(=O)[O-].[Zn][O]([Zn])([Zn])[Zn]',
- 'topology': 'pcu',
- 'cat': '0',
- 'cifname': 'P1-IRMOF-1'}
-```
-
-## 📜 Original README
-
-[Insert the contents of the original MOFid README here]
