@@ -9,7 +9,7 @@ A streamlined version of MOFid for easy compilation and use on Windows through C
 ## 🎯 Purpose
 
 1. Provide a user-friendly version of the original MOFid repository that's easy to compile and use on Windows through Cygwin.
-2. Utilize the latest version of OpenBabel, ensuring compatibility with modern C++11 standards and facilitating compilation with the latest gcc versions (13.2, 14.2, etc.).
+2. Utilize the latest version of OpenBabel, ensuring compatibility with modern C++ standards and facilitating compilation with the latest gcc versions (13.2, 14.2, etc.).
 
 ## 🚀 Getting Started
 
