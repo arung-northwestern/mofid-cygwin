@@ -1,23 +1,87 @@
-# ⚠️ WARNING ⚠️
+# MOFid-Cygwin 🏗️🖥️
 
-# A WORK IN PROGRESS - DO NOT USE YET!
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Windows](https://svgshare.com/i/ZhY.svg)](https://svgshare.com/i/ZhY.svg)
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 
-## Streamlined version of MOFId for Windows installation using Cygwin
+A streamlined version of MOFid for easy compilation and use on Windows through Cygwin, featuring the latest OpenBabel version.
 
-This version aims to use the official OpenBabel repo instead of the prepackaged version.
+## 🎯 Purpose
 
-# MOFid
+1. Provide a user-friendly version of the original MOFid repository that's easy to compile and use on Windows through Cygwin.
+2. Utilize the latest version of OpenBabel, ensuring compatibility with modern C++11 standards and facilitating compilation with the latest gcc versions (13.2, 14.2, etc.).
 
-A system for rapid identification and analysis of metal-organic frameworks.
+## 🚀 Getting Started
 
-Please cite [DOI: 10.1021/acs.cgd.9b01050](https://pubs.acs.org/doi/abs/10.1021/acs.cgd.9b01050) if you use MOFid in your work.
+### Prerequisites
 
-## 2024 update
-This is the main repository for MOFid code, with the some notable updates in 2024:
-- updated dependencies
-- support of gcc 11.x
-- continuous integration
+- [Cygwin](https://www.cygwin.com/) installed with the following packages:
+  - gcc-core
+  - gcc-g++
+  - libstdc++
+  - boost-build
+  - cmake
 
-If you wish to view the original MOFid code released in 2019, please check out the branch [mofid1.0_archive](https://github.com/snurr-group/mofid/tree/mofid1.0_archive).
-## Usage
-[View the documentation](https://snurr-group.github.io/mofid/) for usage information.
+### Installation
+
+1. Open a new Cygwin terminal as administrator.
+
+2. Clone this repository:
+   ```
+   git clone https://github.com/yourusername/mofid-cygwin.git
+   cd mofid-cygwin
+   ```
+
+3. Remove existing build folders (if present):
+   ```
+   rm -rf openbabel/build openbabel/installed ./bin
+   ```
+
+4. Initialize the build:
+   ```
+   make init
+   ```
+
+5. Verify the installation:
+   ```
+   bin/sbu irmof_test.cif
+   ```
+   You should see output similar to the example in the original README.
+
+6. Set up the Python environment:
+   ```
+   which python
+   python set_paths.py
+   pip install .
+   ```
+
+7. Verify the Python package installation:
+   ```
+   conda list mofid
+   ```
+
+## 🧪 Testing
+
+Open iPython and run:
+
+```
+from mofid.run_mofid import cif2mofid
+cif2mofid('irmof_test.cif')
+```
+
+You should see output similar to:
+
+```
+{'mofid': '[O-]C(=O)c1ccc(cc1)C(=O)[O-].[Zn][O]([Zn])([Zn])[Zn] MOFid-v1.pcu.cat0.NO_REF;P1-IRMOF-1',
+ 'mofkey': 'Zn.KKEYFWRCBNTPAC.MOFkey-v1.pcu.NO_REF',
+ 'smiles_nodes': ['[Zn][O]([Zn])([Zn])[Zn]'],
+ 'smiles_linkers': ['[O-]C(=O)c1ccc(cc1)C(=O)[O-]'],
+ 'smiles': '[O-]C(=O)c1ccc(cc1)C(=O)[O-].[Zn][O]([Zn])([Zn])[Zn]',
+ 'topology': 'pcu',
+ 'cat': '0',
+ 'cifname': 'P1-IRMOF-1'}
+```
+
+## 📜 Original README
+
+[Insert the contents of the original MOFid README here]
