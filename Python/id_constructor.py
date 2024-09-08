@@ -57,7 +57,17 @@ def runcmd(cmd_list, timeout=None):
         return subprocess.run(cmd_list, universal_newlines=True,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout)
 
-def extract_fragments(mof_path,output_path):
+def extract_fragments(mof_path, output_path):
+    # Add these debug prints
+    print(f"SBU_BIN: {SBU_BIN}")
+    print(f"mof_path: {mof_path}")
+    print(f"output_path: {output_path}")
+    print(f"Current working directory: {os.getcwd()}")
+    print(f"PATH: {os.environ.get('PATH')}")
+    print(f"LD_LIBRARY_PATH: {os.environ.get('LD_LIBRARY_PATH')}")
+    print(f"BABEL_DATADIR: {os.environ.get('BABEL_DATADIR')}")
+    print(f"BABEL_LIBDIR: {os.environ.get('BABEL_LIBDIR')}")
+
     # Extract MOF decomposition information using a C++ code based on OpenBabel
     cpp_run = runcmd([SBU_BIN, mof_path, output_path])
     cpp_output = cpp_run.stdout
@@ -74,7 +84,7 @@ def extract_fragments(mof_path,output_path):
         cat = str(int(cat) - 1)
         if cat == '-1':
             cat = None
-    
+
     # Parse node/linker fragment notation
     if all_fragments[0] != '# Nodes:':
         return (['*'], [], cat, '')
