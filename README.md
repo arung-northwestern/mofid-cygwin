@@ -80,7 +80,7 @@ Run this in the cygwin terminal in the `mofid-cygwin` folder after compilation.
 
 ## 📚 Usage (Detailed)
 
-For a detailed example of how to use MOFid from a Jupyter notebook, check out the [**run_from_jupyter.ipynb**](tests/run_from_jupyter.ipynb) file located in the `tests` folder. This notebook demonstrates how to run MOFid functions directly from Jupyter, including extracting fragments and topologies, as well as using the `cif2mofid` wrapper for quick access to MOFid data. 🎉
+For a detailed example of how to use MOFid from a Jupyter notebook, check out the [**run_from_jupyter.ipynb**](tests/run_from_jupyter.ipynb) file located in the `tests` folder. This notebook demonstrates how to run MOFid functions directly from Jupyter, including extracting fragments and topologies, as well as using the `cif2mofid` wrapper for quick access to compiling MOFid for a CIF file directly. 🎉
 
 ## 🧪 Testing
 
