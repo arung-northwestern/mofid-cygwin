@@ -7,6 +7,142 @@ to wrap it up as a formated string.
 
 @author: Ben Bucior
 """
+from pathlib import Path
+def convert_to_cygwin_path(windows_path):
+    """Convert a Windows path to a Cygwin-style path and escape spaces.
+
+    Args:
+        windows_path: The Windows-style path to convert.
+
+    Returns:
+        str: The converted Cygwin-style path with escaped spaces.
+
+    Example:
+        >>> convert_to_cygwin_path(Path(r"C:\Program Files\MyApp"))
+        '/c/Program\\ Files/MyApp'
+    """
+    import os  # Importing os for path manipulation
+
+    cygwin_path = str(windows_path).replace('\\', '/')
+    if cygwin_path[1:3] == ':':
+        cygwin_path = '/' + cygwin_path[0].lower() + cygwin_path[2:]
+
+    # Escape spaces with backslashes
+    cygwin_path = cygwin_path.replace(' ', '\\ ')
+    return cygwin_path
+
+
+def make_command(path_to_cif, executable_path, flags=""):
+    """Create a command string for running a Cygwin executable with a CIF file.
+
+    Args:
+        path_to_cif: The path to the CIF file.
+
+        executable_path: The path to the executable.
+        flags: Additional flags to include in the command.
+
+    Returns:
+        str: The command string to be executed in Cygwin.
+
+    Example:
+        >>> command = make_command(Path(r"C:\path\to\file.cif"), Path(r"C:\path\to\executable"), "-ha -res")
+
+        >>> print(command)
+
+        'C:/path/to/executable -ha -res C:/path/to/file.cif'
+    """
+    import os  # Importing os for path manipulation
+
+
+    # Convert paths to Cygwin format
+    cygwin_executable_path = convert_to_cygwin_path(executable_path)
+    cygwin_cif_path = convert_to_cygwin_path(path_to_cif)
+
+    # Print the resolved paths for debugging
+    print("Cygwin Executable Path:", cygwin_executable_path)
+    print("Cygwin CIF Path:", cygwin_cif_path)
+
+    # Prepare the command for Cygwin terminal without quotes around paths
+    command = f"{cygwin_executable_path} {flags} {cygwin_cif_path}"
+    print('Command is', command)
+    return command
+def run_cygwin_from_jupyter(cygwin_command, cygwin_path=r"C:\cygwin64\bin"):
+    """Run a Cygwin command from a Jupyter notebook.
+
+    Args:
+        cygwin_command: The command to run in Cygwin.
+        cygwin_path: The path to the Cygwin installation (default is r"C:\cygwin64\bin").
+
+    Returns:
+        None: This function prints the output and errors directly.
+    """
+    import os  # Importing os for environment manipulation
+    import subprocess  # Importing subprocess to run commands
+
+    # Add Cygwin bin to the PATH
+    os.environ["PATH"] = f"{cygwin_path};{os.environ['PATH']}"
+
+    # Run the command
+    result = subprocess.run(
+        [f"{cygwin_path}\\bash.exe", "-c", cygwin_command],
+        capture_output=True,
+        text=True,
+        shell=True
+    )
+
+    # Print the output
+    print(result.stdout)
+
+    # Print any errors
+    if result.stderr:
+        print("Errors:", result.stderr)
+
+def run_cygwin_from_jupyter_rt(cygwin_command, cygwin_path=r"C:\cygwin64\bin"):
+    """Run a Cygwin command from a Jupyter notebook in real-time.
+
+    Args:
+        cygwin_command: The command to run in Cygwin.
+        cygwin_path: The path to the Cygwin installation (default is r"C:\cygwin64\bin").
+
+    Returns:
+        tuple: (return_code, output, errors)
+    """
+    import os
+    import subprocess
+    import sys
+
+    # Add Cygwin bin to the PATH
+    os.environ["PATH"] = f"{cygwin_path};{os.environ['PATH']}"
+
+    # Run the command
+    process = subprocess.Popen(
+        [f"{cygwin_path}\\bash.exe", "-c", cygwin_command],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        bufsize=1,
+        universal_newlines=True
+    )
+
+    output = []
+    errors = []
+
+    # Print output in real-time and capture it
+    for line in process.stdout:
+        print(line, end='')
+        output.append(line)
+        sys.stdout.flush()
+
+    # Capture errors (if any)
+    for line in process.stderr:
+        print("Error:", line, end='', file=sys.stderr)
+        errors.append(line)
+        sys.stderr.flush()
+
+    # Wait for the process to complete and get the return code
+    return_code = process.wait()
+
+    return return_code, ''.join(output), ''.join(errors)
 
 import sys
 import os
@@ -57,7 +193,26 @@ def runcmd(cmd_list, timeout=None):
         return subprocess.run(cmd_list, universal_newlines=True,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout)
 
-def extract_fragments(mof_path, output_path):
+def extract_fragments(mof_path, output_path=Path('.').resolve(), path_to_mofid=None, path_to_cygwin=r"C:\cygwin64\bin"):
+    """
+    Extract MOF decomposition information.
+
+    Args:
+        mof_path (str): Path to the MOF file.
+        output_path (str): Path to the output directory.
+        path_to_mofid (str, optional): Path to the MOFid installation. If None, uses the default.
+        path_to_cygwin (str, optional): Path to the Cygwin installation. Defaults to r"C:\cygwin64\bin".
+
+    Returns:
+        tuple: (node_fragments, linker_fragments, cat, base_mofkey)
+    """
+    import os
+    from mofid.paths import bin_path as default_bin_path
+
+    # Use provided path_to_mofid or default
+    bin_path = path_to_mofid if path_to_mofid is not None else default_bin_path
+    SBU_BIN = path_to_mofid / 'bin' / 'sbu'
+
     # Add these debug prints
     print(f"SBU_BIN: {SBU_BIN}")
     print(f"mof_path: {mof_path}")
@@ -68,11 +223,15 @@ def extract_fragments(mof_path, output_path):
     print(f"BABEL_DATADIR: {os.environ.get('BABEL_DATADIR')}")
     print(f"BABEL_LIBDIR: {os.environ.get('BABEL_LIBDIR')}")
 
-    # Extract MOF decomposition information using a C++ code based on OpenBabel
-    cpp_run = runcmd([SBU_BIN, mof_path, output_path])
-    cpp_output = cpp_run.stdout
-    sys.stderr.write(cpp_run.stderr)  # Re-forward sbu.cpp errors
-    if cpp_run.returncode:  # EasyProcess uses threads, so you don't have to worry about the entire code crashing
+    # Create the command for running sbu
+    sbu_command = make_command(mof_path, SBU_BIN)
+
+    # Run the command using Cygwin
+    return_code, cpp_output, errors = run_cygwin_from_jupyter_rt(sbu_command, cygwin_path=path_to_cygwin)
+
+    if return_code != 0:
+        print("Error: sbu command failed.")
+        print("Errors:", errors)
         all_fragments = ['*']  # Null-behaving atom for Open Babel and rdkit, so the .smi file is still useful
     else:
         all_fragments = cpp_output.strip().split('\n')
@@ -94,22 +253,53 @@ def extract_fragments(mof_path, output_path):
     linker_fragments = all_fragments[linker_flag_loc+1:]  # could be the empty set
 
     base_mofkey = None
-    if not cpp_run.returncode:  # If it's a successful run
+    if return_code == 0:  # If it's a successful run
         mofkey_loc = os.path.join(
-            output_path, 'MetalOxo', 'mofkey_no_topology.txt')
+            output_path, 'Output', 'MetalOxo', 'mofkey_no_topology.txt')
         with open(mofkey_loc) as f:
             base_mofkey = f.read().rstrip()  # ending newlines, etc.
 
     return (sorted(node_fragments), sorted(linker_fragments), cat, base_mofkey)
 
-def extract_topology(mof_path):
-    # Extract underlying MOF topology using Systre and the output data from my C++ code
-    try:
-        java_run = runcmd(SYSTRE_CMD_LIST + [mof_path],
-            timeout=SYSTRE_TIMEOUT)
-    except subprocess.TimeoutExpired:
-        return 'TIMEOUT'
-    java_output = java_run.stdout
+def extract_topology(topology_file, path_to_mofid=None, path_to_cygwin=r"C:\cygwin64\bin"):
+    """
+    Extract underlying MOF topology using Systre.
+
+    Args:
+        topology_file (str): Path to the topology.cgd file.
+        path_to_mofid (str, optional): Path to the MOFid installation. If None, uses the default.
+        path_to_cygwin (str, optional): Path to the Cygwin installation. Defaults to r"C:\cygwin64\bin".
+
+    Returns:
+        str: The extracted topology or an error message.
+    """
+    import os
+    from mofid.paths import resources_path as default_resources_path
+
+    # Use provided path_to_mofid or default for resources
+    resources_path = os.path.join(path_to_mofid, 'Resources') if path_to_mofid else default_resources_path
+
+    # Update paths based on the new resources_path and convert to Cygwin style
+    GAVROG_LOC = convert_to_cygwin_path(os.path.join(resources_path, 'Systre-experimental-20.8.0.jar'))
+    RCSR_PATH = convert_to_cygwin_path(os.path.join(resources_path, 'RCSRnets.arc'))
+
+    # Convert the topology file path to Cygwin style
+    # topology_file =(topology_file)
+
+    # Create the command for running Systre
+    systre_command = make_command(
+        topology_file,
+        'java',
+        f"-Xmx1024m -cp {GAVROG_LOC} org.gavrog.apps.systre.SystreCmdline {RCSR_PATH}"
+    )
+
+    # Run the command using Cygwin and capture output
+    return_code, java_output, errors = run_cygwin_from_jupyter_rt(systre_command, cygwin_path=path_to_cygwin)
+
+    if return_code != 0:
+        print("Error running Systre.")
+        print("Errors:", errors)
+        return 'ERROR'
 
     topologies = []  # What net(s) are found in the simplified framework(s)?
     current_component = 0

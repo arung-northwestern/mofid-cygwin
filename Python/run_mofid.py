@@ -12,38 +12,54 @@ from mofid.id_constructor import (extract_fragments, extract_topology,
 from mofid.cpp_cheminformatics import openbabel_GetSpacedFormula
 DEFAULT_OUTPUT_PATH = 'Output'
 
-def cif2mofid(cif_path,output_path=DEFAULT_OUTPUT_PATH):
+def cif2mofid(cif_path, output_path=DEFAULT_OUTPUT_PATH, path_to_mofid=None, path_to_cygwin=r"C:\cygwin64\bin"):
     # Assemble the MOFid string from all of its pieces.
     # Also export the MOFkey in an output dict for convenience.
     cif_path = os.path.abspath(cif_path)
     output_path = os.path.abspath(output_path)
 
+    # Extract fragments from the CIF file
     node_fragments, linker_fragments, cat, base_mofkey = extract_fragments(
-        cif_path, output_path)
+        mof_path=cif_path,
+        output_path=output_path,
+        path_to_mofid=path_to_mofid,
+        path_to_cygwin=path_to_cygwin
+    )
+
+    # Initialize topology variable
+    topology = 'NA'
+
     if cat is not None:
-        sn_topology = extract_topology(os.path.join(output_path,
-            'SingleNode','topology.cgd'))
-        an_topology = extract_topology(os.path.join(output_path,
-            'AllNode','topology.cgd'))
+        # Construct paths to the topology files
+        sn_topology_file = os.path.join(output_path, 'Output', 'SingleNode', 'topology.cgd')
+        an_topology_file = os.path.join(output_path, 'Output','AllNode', 'topology.cgd')
+
+        # Extract topologies for SingleNode and AllNode
+        sn_topology = extract_topology(sn_topology_file, path_to_mofid=path_to_mofid, path_to_cygwin=path_to_cygwin)
+        an_topology = extract_topology(an_topology_file, path_to_mofid=path_to_mofid, path_to_cygwin=path_to_cygwin)
+
+        # Determine the final topology
         if sn_topology == an_topology or an_topology == 'ERROR':
             topology = sn_topology
         else:
             topology = sn_topology + ',' + an_topology
-    else:
-        topology = 'NA'
 
     mof_name = os.path.splitext(os.path.basename(cif_path))[0]
     mofkey = base_mofkey
+
+    # Get the commit reference
     try:
         with open('.git/ORIG_HEAD', mode='r') as f:
             commit_ref = f.read()[:8]
     except OSError:
         commit_ref = 'NO_REF'
 
+    # Update the mofkey if topology is available
     if topology != 'NA':
         base_topology = topology.split(',')[0]
         mofkey = assemble_mofkey(mofkey, base_topology, commit_ref=commit_ref)
 
+    # Assemble the MOFid string
     all_fragments = []
     all_fragments.extend(node_fragments)
     all_fragments.extend(linker_fragments)
@@ -53,32 +69,15 @@ def cif2mofid(cif_path,output_path=DEFAULT_OUTPUT_PATH):
     parsed = parse_mofid(mofid)
 
     identifiers = {
-        'mofid' : mofid,
-        'mofkey' : mofkey,
-        'smiles_nodes' : node_fragments,
-        'smiles_linkers' : linker_fragments,
-        'smiles' : parsed['smiles'],
-        'topology' : parsed['topology'],
-        'cat' : parsed['cat'],
-        'cifname' : parsed['name']
+        'mofid': mofid,
+        'mofkey': mofkey,
+        'smiles_nodes': node_fragments,
+        'smiles_linkers': linker_fragments,
+        'smiles': parsed['smiles'],
+        'topology': parsed['topology'],
+        'cat': parsed['cat'],
+        'cifname': parsed['name']
     }
-
-    # Write MOFid and MOFkey output to files, as well as node/linker info
-    with open(os.path.join(output_path, 'python_mofid.txt'), 'w') as f:
-        f.write(identifiers['mofid'] + '\n')
-    with open(os.path.join(output_path, 'python_mofkey.txt'), 'w') as f:
-        f.write(identifiers['mofkey'] + '\n')
-    with open(os.path.join(output_path, 'python_smiles_parts.txt'), 'w') as f:
-        for smiles in node_fragments:
-            f.write('node' + '\t' + smiles + '\n')
-        for smiles in linker_fragments:
-            f.write('linker' + '\t' + smiles + '\n')
-    with open(os.path.join(output_path, 'python_molec_formula.txt'), 'w') as f:
-        f.write(
-            openbabel_GetSpacedFormula(
-                os.path.join(output_path, 'orig_mol.cif'), ' ', False
-            ) + '\n'
-        )
 
     return identifiers
 
