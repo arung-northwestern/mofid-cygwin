@@ -4,20 +4,13 @@
 [![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://www.microsoft.com/windows)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 
-A streamlined version of MOFid for easy compilation and use on Windows through Cygwin, featuring the latest OpenBabel version.
-
-## ⚠️ Disclaimer
-
-This project is intended specifically for use with Cygwin and has been tested only on the developer's personal laptop. While efforts have been made to ensure its functionality, please note that it may not work out of the box on all systems. Use at your own discretion.
-
-We encourage users who encounter issues or discover solutions to post them in the Issues tab of this repository. Your contributions may prove invaluable to other users facing similar challenges.
-
-Thank you for your understanding and potential contributions to improving this project!
+A streamlined version of MOFid for easy compilation and use on Windows through Cygwin, featuring the latest OpenBabel version. The Python wrapper has been modified to work from Jupyter notebboks (Ipython) with commands executed in Cygwin.
 
 ## 🎯 Purpose
 
 1. Provide a user-friendly version of the original MOFid repository that's easy to compile and use on Windows through Cygwin.
 2. Utilize the latest version of OpenBabel, ensuring compatibility with modern C++ standards and facilitating compilation with the latest gcc versions (13.2, 14.2, etc.).
+3. Add wrapper functions to run MOFid commands in Cygwin from Jupyter notebooks.
 
 ## 🚀 Getting Started
 
@@ -29,6 +22,11 @@ Thank you for your understanding and potential contributions to improving this p
   - libstdc++
   - boost-build
   - cmake
+  - binutils (provides the `ar` command)
+- **Java Runtime Environment**: Install using conda:
+  ```
+  conda install -c conda-forge openjdk
+  ```
 
 ### 🛠️ Installation
 
@@ -59,37 +57,30 @@ Thank you for your understanding and potential contributions to improving this p
    ```
 
 6. Verify the installation:
-   ```bash
-   $ bin/sbu irmof_test.cif
-   Created a new output directory: Output/
-   Created a new output directory: Output//MetalOxo
-   Created a new output directory: Output//SingleNode
-   Created a new output directory: Output//AllNode
-   Created a new output directory: Output//StandardIsolated
-   # Nodes:
-   [Zn][O]([Zn])([Zn])[Zn]
-   # Linkers:
-   [O-]C(=O)c1ccc(cc1)C(=O)[O-]
-   # Found 1 simplified net(s)
+
+Run this in the cygwin terminal in the `mofid-cygwin` folder after compilation.
+
    ```
+   bin/sbu irmof_test.cif
+   ```
+   You should see output showing the SMILES of the nodes and linkers.
 
 7. Set up the Python environment:
    ```
-   which python
-   ```
-
-Ensure you are in the correct environment then run (make a new virtual environment if you prefer):
-
-   ```
+   which python  # Ensure you are in the correct environment
    python set_paths.py
    pip install .
-
    ```
 
 8. Verify the Python package installation:
+
    ```
    conda list mofid
    ```
+
+## 📚 Usage (Detailed)
+
+For a detailed example of how to use MOFid from a Jupyter notebook, check out the [**run_from_jupyter.ipynb**](tests/run_from_jupyter.ipynb) file located in the `tests` folder. This notebook demonstrates how to run MOFid functions directly from Jupyter, including extracting fragments and topologies, as well as using the `cif2mofid` wrapper for quick access to MOFid data. 🎉
 
 ## 🧪 Testing
 
@@ -97,10 +88,14 @@ Open iPython and run the following code:
 
 ```
 from mofid.run_mofid import cif2mofid
-result = cif2mofid('irmof_test.cif')
+from pathlib import Path
+path_to_mofid = Path('your path to mofid-cygwin compiled folder')
+path_to_cif = Path('./irmof_test.cif').resolve()
+output_path = Path('.').resolve()
+result = cif2mofid(cif_path=path_to_cif, output_path=output_path, path_to_mofid=path_to_mofid)
 print(result)
 ```
-You should see something like this:
+You should see something like this in the cell output:
 
 ```
 {'mofid': '[O-]C(=O)c1ccc(cc1)C(=O)[O-].[Zn]O([Zn])[Zn] MOFid-v1.pcu.cat0.NO_REF;P1-IRMOF-1',
@@ -112,8 +107,7 @@ You should see something like this:
 'cat': '0',
 'cifname': 'P1-IRMOF-1'}
 ```
-This confirms that the MOFid package is correctly installed and working..
-
+This confirms that the MOFid package is correctly installed and working.
 
 ## 📚 Original README
 
